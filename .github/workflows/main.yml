@@ -22,12 +22,12 @@ jobs:
       
       - name: npm install, build
         run: |
-          make install
+          npm install
         env:
           CI: true
       - name: Run linter
         run: |
-          make lint
+          npm run lint
           
       - name: Test & publish code coverage
         uses: paambaati/codeclimate-action@v2.6.0
