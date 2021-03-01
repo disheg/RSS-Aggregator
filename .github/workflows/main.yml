@@ -33,6 +33,3 @@ jobs:
         uses: paambaati/codeclimate-action@v2.6.0
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CLIRMA }}
-        with:
-          coverageCommand: npm test
-          debug: true
