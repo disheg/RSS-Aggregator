@@ -5,6 +5,8 @@
   "private": true,
   "scripts": {
     "build": "webpack",
+    "watch": "webpack --watch",
+    "start:dev": "webpack serve",
     "lint": "npx eslint .",
     "test": "npm test"
   },
@@ -17,6 +19,9 @@
   "bugs": {
     "url": "https://github.com/disheg/frontend-project-lvl3/issues"
   },
+  "browser": {
+    "fs": false
+  },
   "homepage": "https://github.com/disheg/frontend-project-lvl3#readme",
   "devDependencies": {
     "css-loader": "^5.0.2",
@@ -26,11 +31,14 @@
     "html-webpack-plugin": "^5.2.0",
     "style-loader": "^2.0.0",
     "webpack": "^5.23.0",
-    "webpack-cli": "^4.5.0"
+    "webpack-cli": "^4.5.0",
+    "webpack-dev-server": "^3.11.2"
   },
   "dependencies": {
     "bootstrap": "^4.6.0",
+    "i18next": "^19.9.1",
     "lodash": "^4.17.21",
-    "yup": "^0.32.9"
+    "yup": "^0.32.9",
+    "on-change": "^2.2.3"
   }
 }

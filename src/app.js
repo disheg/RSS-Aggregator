@@ -1,10 +1,21 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import _ from 'lodash';
+import i18next from 'i18next';
 import * as yup from 'yup';
+import onChange from 'on-change';
 
-const validate = (data) => {
+const validate = (data, localStorage) => {
   const schema = yup.object().shape({
-    url: yup.string().required().url(),
+    url: yup.string()
+      .required(i18next.t('required'))
+      .url(i18next.t('wrongUrl'))
+      .test('test-name', i18next.t('hasAlready'), function isInclude(value) {
+        const { path, createError } = this;
+        if (_.includes(localStorage.urls, value)) {
+          return createError({ path, message: i18next.t('hasAlready') });
+        }
+        return true;
+      }),
   });
   return schema.validate({ url: data });
 };
@@ -14,12 +25,13 @@ const parseData = (data) => {
   const description = data.querySelector('description').textContent;
   const items = data.querySelectorAll('item');
   const posts = [...items].map((el) => ({
+    id: _.uniqueId(),
     title: el.children[0].textContent,
     description: el.children[1].textContent,
     url: el.children[2].textContent,
   }));
   return {
-    feed: { title, description },
+    feed: { id: _.uniqueId(), title, description },
     posts,
   };
 };
@@ -63,41 +75,93 @@ const render = (storage) => {
 };
 
 export default () => {
+  const form = document.querySelector('#form-rss');
+  const input = form.elements.host;
+  const feedback = form.querySelector('.feedback');
+
   const localStorage = {
+    data: null,
     urls: [],
     feeds: [],
     posts: [],
   };
-  const form = document.querySelector('#form-rss');
-  const input = form.elements.host;
-  const feedback = form.querySelector('.feedback');
+  const state = {
+    formProcess: {
+      url: '',
+      error: '',
+      state: '',
+      valid: true,
+    },
+  };
+
+  const submitButton = form.querySelector('[type="submit"]');
+
+  const updateData = (data, storage) => {
+    const newStorage = { ...storage };
+    const { feed, posts } = data;
+    newStorage.feeds.push(feed);
+    newStorage.posts = [...newStorage.posts, ...posts];
+    render(newStorage);
+    input.value = '';
+    feedback.innerHTML = 'RSS успешно загружен';
+  };
+
+  const processStateHandler = (processState, storage) => {
+    switch (processState) {
+      case 'sending':
+        submitButton.disabled = true;
+        break;
+      case 'failed':
+        feedback.innerHTML = state.formProcess.error;
+        break;
+      case 'finished':
+        submitButton.disabled = false;
+        updateData(parseData(storage.data), storage);
+        break;
+      default:
+        return null;
+    }
+    return null;
+  };
+
+  const watchedState = onChange(state, (path, value) => {
+    switch (path) {
+      case 'formProcess.valid':
+        input.classList.add('is-invalid');
+        feedback.innerHTML = state.formProcess.error.errors;
+        break;
+      case 'formProcess.state':
+        processStateHandler(value, localStorage);
+        break;
+      default:
+        return null;
+    }
+    return null;
+  });
+
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const hostName = formData.get('host');
     validate(hostName, localStorage)
       .then(() => {
-        if (_.includes(localStorage.urls, hostName)) {
-          input.classList.add('is-invalid');
-          throw new Error('RSS уже существует');
-        }
+        watchedState.formProcess.state = 'sending';
+        watchedState.formProcess.valid = true;
         input.classList.remove('is-invalid');
         parseSite(hostName)
           .then((data) => {
+            localStorage.data = data;
             localStorage.urls.push(hostName);
-            const { feed, posts } = parseData(data);
-            localStorage.feeds = [...localStorage.feeds, feed];
-            localStorage.posts = [...localStorage.posts, ...posts];
-            render(localStorage);
+            watchedState.formProcess.state = 'finished';
           })
-          .then(() => {
-            input.value = '';
-            feedback.innerHTML = 'RSS успешно загружен';
+          .catch((error) => {
+            state.formProcess.error = error;
+            watchedState.formProcess.state = 'failed';
           });
       })
       .catch((error) => {
-        input.classList.add('is-invalid');
-        feedback.innerHTML = error.errors || error;
+        state.formProcess.error = error;
+        watchedState.formProcess.valid = false;
       });
   });
 };
