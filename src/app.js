@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import axios from 'axios';
-import i18next from 'i18next';
+import i18n from 'i18next';
 import * as yup from 'yup';
 import onChange from 'on-change';
 
@@ -80,6 +80,7 @@ const render = (storage) => {
 };
 
 export default () => {
+  const i18next = i18n.createInstance();
   i18next
     .init({
       lng: 'ru', // Текущий язык
