@@ -1,8 +1,8 @@
 import i18next from 'i18next';
 import app from './app';
 
-export default async () => {
-  await i18next.init({
+export default () => {
+  i18next.init({
     lng: 'ru', // Текущий язык
     debug: true,
     resources: {
