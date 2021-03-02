@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import axios from 'axios';
 import i18next from 'i18next';
 import * as yup from 'yup';
 import onChange from 'on-change';
@@ -104,7 +105,8 @@ export default () => {
     switch (processState) {
       case 'sending':
         console.log('processSending');
-        fetch(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(state.formProcess.url)}`)
+        submitButton.disabled = true;
+        axios.get(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(state.formProcess.url)}`)
           .then((response) => {
             console.log('response', response);
             if (response.ok) {
