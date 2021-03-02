@@ -169,19 +169,12 @@ export default () => {
     const formData = new FormData(e.target);
     const hostName = formData.get('host');
     state.formProcess.url = hostName;
-    validate(hostName, localStorage)
-      .then(() => {
-        console.log('sending');
-        axios.get(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(state.formProcess.url)}`)
-          .then((response) => {
-            console.log('response', response);
-            console.log('Response Ok');
-            return response.data;
-          })
+    validate(hostName, localStorage);
+    axios.get(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(state.formProcess.url)}`)
+      .then((response) => {
+        console.log('response', response);
+        console.log('Response Ok');
+        return response.data;
       })
-      .catch((error) => {
-        state.formProcess.error = error;
-        watchedState.formProcess.valid = false;
-      });
   });
 };
