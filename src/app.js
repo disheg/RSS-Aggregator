@@ -128,6 +128,10 @@ export default () => {
     input.value = '';
   };
 
+  const handleError = () => {
+    feedback.textContent = state.formProcess.error;
+  };
+
   const processStateHandler = (processState, watchedState, storage) => {
     switch (processState) {
       case 'sending':
@@ -138,9 +142,6 @@ export default () => {
             console.log('response', response);
             console.log('Response Ok');
             return response.data;
-          })
-          .catch((error) => {
-            throw new Error(error);
           })
           .then((data) => {
             const parser = new DOMParser();
@@ -154,15 +155,15 @@ export default () => {
             watchedState.formProcess.state = 'finished';
           })
           .catch((error) => {
-            state.formProcess.error = error;
+            state.formProcess.errors.push(error);
             watchedState.formProcess.state = 'failed';
           });
         console.log('After Promise')
         feedback.textContent = i18next.t('rssLoaded');
         break;
       case 'failed':
-        console.log('failed')
-        feedback.textContent = state.formProcess.error[0];
+        console.log('failed', state.formProcess.error)
+        handleError();
         console.log(feedback)
         console.log(feedback.textContent)
         break;
@@ -182,10 +183,13 @@ export default () => {
     switch (path) {
       case 'formProcess.valid':
         input.classList.add('is-invalid');
-        feedback.innerHTML = state.formProcess.error.errors;
+        feedback.innerHTML = state.formProcess.error.errors[0];
         break;
       case 'formProcess.state':
         processStateHandler(value, watchedState, localStorage);
+        break;
+      case 'formProcess.error':
+        handleError();
         break;
       default:
         return null;
@@ -215,8 +219,9 @@ export default () => {
         console.log('update');
       })
       .catch((error) => {
-        console.log('Error')
-        state.formProcess.error = error.errors;
+        console.log('Error', error)
+        watchedState.formProcess.error = error.errors[0] || error;
+        console.log(state.formProcess)
         watchedState.formProcess.state = 'failed';
       })
   });
