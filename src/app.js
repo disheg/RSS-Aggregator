@@ -177,5 +177,8 @@ export default () => {
         console.log('Response Ok');
         return response.data;
       })
+      .catch((error) => {
+        console.log(error);
+      })
   });
 };
