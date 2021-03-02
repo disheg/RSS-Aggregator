@@ -161,6 +161,7 @@ export default () => {
         feedback.textContent = i18next.t('rssLoaded');
         break;
       case 'failed':
+        console.log('failed')
         feedback.textContent = state.formProcess.error;
         break;
       case 'finished':
@@ -200,10 +201,7 @@ export default () => {
     const proxy = 'https://hexlet-allorigins.herokuapp.com/get?url=';
     console.log(localStorage)
     validate(hostName, localStorage, i18next)
-      .then((res) => {
-        console.log('res', res)
-        return axios.get(proxy + state.formProcess.url, { params: { disableCache: true } })
-      })
+      .then(() => axios.get(proxy + state.formProcess.url, { params: { disableCache: true } }))
       .then((response) => {
         watchedState.formProcess.state = 'finished';
         return parseData(response.data.contents);
@@ -215,6 +213,7 @@ export default () => {
         console.log('update');
       })
       .catch((error) => {
+        console.log('Error')
         state.formProcess.error = error.errors;
         watchedState.formProcess.state = 'failed';
       })
