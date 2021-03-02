@@ -101,7 +101,7 @@ export default () => {
     newStorage.feeds.push(feed);
     newStorage.posts = [...newStorage.posts, ...posts];
     render(newStorage);
-    feedback.innerHTML = i18next.t('rssLoaded');
+    feedback.textContent = i18next.t('rssLoaded');
     input.value = '';
   };
 
