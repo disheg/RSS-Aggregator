@@ -228,6 +228,7 @@ export default () => {
         console.log(localStorage)
         watchedState.formProcess.error = error.errors || error.message;
         watchedState.formProcess.state = 'failed';
+        console.log(feedback)
         console.log(state.formProcess)
       })
   });
