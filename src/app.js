@@ -37,7 +37,10 @@ const parseData = (data) => {
 
 const parseSite = (url) => fetch(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(url)}`)
   .then((response) => {
-    if (response.ok) return response.json();
+    if (response.ok) {
+      console.log('Response Ok');
+      return response.json();
+    }
     throw new Error('Network response was not ok.');
   })
   .then((data) => {
