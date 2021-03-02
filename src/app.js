@@ -178,9 +178,11 @@ export default () => {
         return parseData(response.data.contents);
       })
       .then(({ feed, posts }) => {
+        console.log('loadData')
         localStorage.feeds.push(feed);
         localStorage.posts = [...localStorage.posts, ...posts];
         feedback.textContent = i18next.t('rssLoaded');
+        console.log('update');
       })
       .catch((error) => {
         console.log(error);
