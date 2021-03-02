@@ -225,6 +225,7 @@ export default () => {
         console.log(localStorage)
         state.formProcess.error = error.errors || error.message;
         watchedState.formProcess.state = 'failed';
+        console.log('1234', feedback.textContent)
         console.log(feedback)
         console.log(state.formProcess)
       })
