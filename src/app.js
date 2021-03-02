@@ -101,8 +101,8 @@ export default () => {
     newStorage.feeds.push(feed);
     newStorage.posts = [...newStorage.posts, ...posts];
     render(newStorage);
+    feedback.innerHTML = i18next.t('rssLoaded');
     input.value = '';
-    feedback.innerHTML = 'RSS успешно загружен';
   };
 
   const processStateHandler = (processState, storage) => {

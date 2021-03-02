@@ -12,6 +12,7 @@ export default async () => {
           urlRequired: 'Необходимо заполнить URL',
           wrongUrl: 'Неправильный URL',
           hasAlready: 'RSS уже существует',
+          rssLoaded: 'RSS успешно загружен',
         },
       },
     },
