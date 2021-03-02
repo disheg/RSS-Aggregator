@@ -161,11 +161,11 @@ export default () => {
         feedback.textContent = i18next.t('rssLoaded');
         break;
       case 'failed':
-        feedback.innerHTML = state.formProcess.error;
+        feedback.textContent = state.formProcess.error;
         break;
       case 'finished':
-        console.log(feedback);
-        console.log(feedback);
+        localStorage.urls.push(watchedState.formProcess.url);
+        feedback.textContent = i18next.t('rssLoaded');
         //submitButton.disabled = false;
         //updateData(parseData(storage.data), storage);
         break;
@@ -192,30 +192,31 @@ export default () => {
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    console.log('submit');
     const formData = new FormData(e.target);
     const hostName = formData.get('host');
     state.formProcess.url = hostName;
-    validate(hostName, localStorage, i18next);
+    const valid = validate(hostName, localStorage, i18next);
+    console.log('valid', valid);
     const proxy = 'https://hexlet-allorigins.herokuapp.com/get?url=';
-    axios.get(proxy + state.formProcess.url, { params: { disableCache: true } })
+    console.log(localStorage)
+    validate(hostName, localStorage, i18next)
+      .then((res) => {
+        console.log('res', res)
+        return axios.get(proxy + state.formProcess.url, { params: { disableCache: true } })
+      })
       .then((response) => {
-        console.log('response', response);
         watchedState.formProcess.state = 'finished';
-        console.log('data', response.data.contents)
         return parseData(response.data.contents);
       })
       .then((data) => getFeedAndPosts(data))
       .then(({ feed, posts }) => {
-        console.log('loadData')
         localStorage.feeds.push(feed);
         localStorage.posts = [...localStorage.posts, ...posts];
-        console.log('i18', i18next.t('rssLoaded'));
-        feedback.textContent = i18next.t('rssLoaded');
         console.log('update');
       })
       .catch((error) => {
-        console.log(error);
+        state.formProcess.error = error.errors;
+        watchedState.formProcess.state = 'failed';
       })
   });
 };
