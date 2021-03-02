@@ -35,20 +35,23 @@ const parseData = (data) => {
   };
 };
 
-const parseSite = (url) => fetch(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(url)}`)
-  .then((response) => {
-    console.log('response', response);
-    if (response.ok) {
-      console.log('Response Ok');
-      return response.json();
-    }
-    throw new Error('Network response was not ok.');
-  })
-  .then((data) => {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(data.contents, 'text/xml');
-    return doc;
-  });
+const parseSite = (url) => {
+  console.log('ParseSite');
+  return fetch(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(url)}`)
+    .then((response) => {
+      console.log('response', response);
+      if (response.ok) {
+        console.log('Response Ok');
+        return response.json();
+      }
+      throw new Error('Network response was not ok.');
+    })
+    .then((data) => {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(data.contents, 'text/xml');
+      return doc;
+    });
+};
 
 const render = (storage) => {
   const renderFeeds = (data) => data.map(({ title, description }) => (`
@@ -112,6 +115,7 @@ export default () => {
   const processStateHandler = (processState, watchedState, storage) => {
     switch (processState) {
       case 'sending':
+        console.log('processSending');
         submitButton.disabled = true;
         parseSite(state.formProcess.url)
           .then((data) => {
