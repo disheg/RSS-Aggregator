@@ -37,20 +37,7 @@ const parseData = (data) => {
 
 const parseSite = (url) => {
   console.log('ParseSite');
-  return fetch(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(url)}`)
-    .then((response) => {
-      console.log('response', response);
-      if (response.ok) {
-        console.log('Response Ok');
-        return response.json();
-      }
-      throw new Error('Network response was not ok.');
-    })
-    .then((data) => {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(data.contents, 'text/xml');
-      return doc;
-    });
+  return fetch(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(url)}`);
 };
 
 const render = (storage) => {
@@ -118,6 +105,19 @@ export default () => {
         console.log('processSending');
         submitButton.disabled = true;
         parseSite(state.formProcess.url)
+          .then((response) => {
+            console.log('response', response);
+            if (response.ok) {
+              console.log('Response Ok');
+              return response.json();
+            }
+            throw new Error('Network response was not ok.');
+          })
+          .then((data) => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(data.contents, 'text/xml');
+            return doc;
+          })
           .then((data) => {
             console.log('Finished');
             localStorage.data = data;
