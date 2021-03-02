@@ -162,7 +162,7 @@ export default () => {
         break;
       case 'failed':
         console.log('failed')
-        feedback.textContent = state.formProcess.error;
+        feedback.textContent = state.formProcess.error[0];
         console.log(feedback)
         console.log(feedback.textContent)
         break;
