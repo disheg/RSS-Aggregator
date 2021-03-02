@@ -170,7 +170,8 @@ export default () => {
     const hostName = formData.get('host');
     state.formProcess.url = hostName;
     validate(hostName, localStorage);
-    axios.get(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(state.formProcess.url)}`)
+    const proxy = 'https://hexlet-allorigins.herokuapp.com/get?url=';
+    axios.get(proxy + state.formProcess.url)
       .then((response) => {
         console.log('response', response);
         console.log('Response Ok');
