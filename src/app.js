@@ -105,8 +105,6 @@ export default () => {
     switch (processState) {
       case 'sending':
         console.log('processSending');
-
-        feedback.textContent = i18next.t('rssLoaded');
         submitButton.disabled = true;
         axios.get(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(state.formProcess.url)}`)
           .then((response) => {
@@ -132,6 +130,8 @@ export default () => {
             state.formProcess.error = error;
             watchedState.formProcess.state = 'failed';
           });
+        console.log('After Promise')
+        feedback.textContent = i18next.t('rssLoaded');
         break;
       case 'failed':
         feedback.innerHTML = state.formProcess.error;
