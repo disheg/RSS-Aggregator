@@ -109,10 +109,21 @@ export default () => {
     input.value = '';
   };
 
-  const processStateHandler = (processState, storage) => {
+  const processStateHandler = (processState, watchedState, storage) => {
     switch (processState) {
       case 'sending':
         submitButton.disabled = true;
+        parseSite(state.formProcess.url)
+          .then((data) => {
+            console.log('Finished');
+            localStorage.data = data;
+            localStorage.urls.push(state.formProcess.url);
+            watchedState.formProcess.state = 'finished';
+          })
+          .catch((error) => {
+            state.formProcess.error = error;
+            watchedState.formProcess.state = 'failed';
+          });
         break;
       case 'failed':
         feedback.innerHTML = state.formProcess.error;
@@ -137,7 +148,7 @@ export default () => {
         feedback.innerHTML = state.formProcess.error.errors;
         break;
       case 'formProcess.state':
-        processStateHandler(value, localStorage);
+        processStateHandler(value, watchedState, localStorage);
         break;
       default:
         return null;
@@ -150,23 +161,13 @@ export default () => {
     console.log('submit');
     const formData = new FormData(e.target);
     const hostName = formData.get('host');
+    state.formProcess.url = hostName;
     validate(hostName, localStorage)
       .then(() => {
         console.log('sending');
         watchedState.formProcess.state = 'sending';
         watchedState.formProcess.valid = true;
         input.classList.remove('is-invalid');
-        parseSite(hostName)
-          .then((data) => {
-            console.log('Finished');
-            localStorage.data = data;
-            localStorage.urls.push(hostName);
-            watchedState.formProcess.state = 'finished';
-          })
-          .catch((error) => {
-            state.formProcess.error = error;
-            watchedState.formProcess.state = 'failed';
-          });
       })
       .catch((error) => {
         state.formProcess.error = error;
