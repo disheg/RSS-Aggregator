@@ -109,11 +109,11 @@ export default () => {
         axios.get(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(state.formProcess.url)}`)
           .then((response) => {
             console.log('response', response);
-            if (response.ok) {
-              console.log('Response Ok');
-              return response.json();
-            }
-            throw new Error('Network response was not ok.');
+            console.log('Response Ok');
+            return response.data;
+          })
+          .catch((error) => {
+            throw new Error(error);
           })
           .then((data) => {
             const parser = new DOMParser();
