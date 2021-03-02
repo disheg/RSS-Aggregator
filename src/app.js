@@ -129,7 +129,9 @@ export default () => {
   };
 
   const handleError = () => {
+    console.log('handleError', state.formProcess.error)
     feedback.textContent = state.formProcess.error;
+    console.log('feedback', feedback.textContent);
   };
 
   const processStateHandler = (processState, watchedState, storage) => {
