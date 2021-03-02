@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "RSS Reader",
   "private": true,
-  "main": "./src/index.js",
+  "main": "./src/init.js",
   "scripts": {
     "build": "webpack",
     "watch": "webpack --watch",
