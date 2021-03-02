@@ -37,6 +37,7 @@ const parseData = (data) => {
 
 const parseSite = (url) => fetch(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(url)}`)
   .then((response) => {
+    console.log('response', response);
     if (response.ok) {
       console.log('Response Ok');
       return response.json();
