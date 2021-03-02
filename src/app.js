@@ -37,6 +37,7 @@ const parseData = (data) => {
 
 const parseSite = (url) => {
   console.log('ParseSite');
+  
   return fetch(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(url)}`);
 };
 
@@ -103,8 +104,7 @@ export default () => {
     switch (processState) {
       case 'sending':
         console.log('processSending');
-        submitButton.disabled = true;
-        parseSite(state.formProcess.url)
+        fetch(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(state.formProcess.url)}`)
           .then((response) => {
             console.log('response', response);
             if (response.ok) {
