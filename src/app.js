@@ -151,6 +151,7 @@ export default () => {
         input.classList.remove('is-invalid');
         parseSite(hostName)
           .then((data) => {
+            console.log('Finished');
             localStorage.data = data;
             localStorage.urls.push(hostName);
             watchedState.formProcess.state = 'finished';
