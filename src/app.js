@@ -188,6 +188,7 @@ export default () => {
         processStateHandler(value, watchedState, localStorage);
         break;
       case 'formProcess.error':
+        console.log('Обработка ошибок 2');
         handleError();
         break;
       default:
