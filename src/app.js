@@ -166,6 +166,7 @@ export default () => {
         break;
       case 'finished':
         localStorage.urls.push(watchedState.formProcess.url);
+        input.value = '';
         feedback.textContent = i18next.t('rssLoaded');
         //submitButton.disabled = false;
         //updateData(parseData(storage.data), storage);
@@ -220,6 +221,7 @@ export default () => {
       })
       .catch((error) => {
         console.log('Error', error)
+        console.log(localStorage)
         watchedState.formProcess.error = error.errors || error.message;
         watchedState.formProcess.state = 'failed';
         console.log(state.formProcess)
