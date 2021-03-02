@@ -4,7 +4,7 @@ import i18n from 'i18next';
 import * as yup from 'yup';
 import onChange from 'on-change';
 
-const validate = (data, localStorage) => {
+const validate = (data, localStorage, i18next) => {
   const schema = yup.object().shape({
     url: yup.string()
       .required(i18next.t('required'))
@@ -196,7 +196,7 @@ export default () => {
     const formData = new FormData(e.target);
     const hostName = formData.get('host');
     state.formProcess.url = hostName;
-    validate(hostName, localStorage);
+    validate(hostName, localStorage, i18next);
     const proxy = 'https://hexlet-allorigins.herokuapp.com/get?url=';
     axios.get(proxy + state.formProcess.url, { params: { disableCache: true } })
       .then((response) => {
