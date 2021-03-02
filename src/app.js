@@ -171,7 +171,7 @@ export default () => {
     state.formProcess.url = hostName;
     validate(hostName, localStorage);
     const proxy = 'https://hexlet-allorigins.herokuapp.com/get?url=';
-    axios.get(proxy + state.formProcess.url)
+    axios.get(proxy + state.formProcess.url, { params: { disableCache: true } })
       .then((response) => {
         console.log('response', response);
         console.log('Response Ok');
