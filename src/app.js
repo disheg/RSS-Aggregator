@@ -105,6 +105,8 @@ export default () => {
     switch (processState) {
       case 'sending':
         console.log('processSending');
+
+        feedback.textContent = i18next.t('rssLoaded');
         submitButton.disabled = true;
         axios.get(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(state.formProcess.url)}`)
           .then((response) => {
@@ -136,7 +138,6 @@ export default () => {
         break;
       case 'finished':
         console.log(feedback);
-        feedback.textContent = i18next.t('rssLoaded');
         console.log(feedback);
         submitButton.disabled = false;
         updateData(parseData(storage.data), storage);
