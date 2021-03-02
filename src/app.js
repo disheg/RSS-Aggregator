@@ -166,6 +166,7 @@ export default () => {
       case 'failed':
         console.log('Обработка ошибок');
         handleError();
+        state.formProcess.state = '';
         break;
       case 'finished':
         localStorage.urls.push(watchedState.formProcess.url);
@@ -188,10 +189,6 @@ export default () => {
         break;
       case 'formProcess.state':
         processStateHandler(value, watchedState, localStorage);
-        break;
-      case 'formProcess.error':
-        console.log('Обработка ошибок 2');
-        handleError();
         break;
       default:
         return null;
@@ -226,7 +223,7 @@ export default () => {
       .catch((error) => {
         console.log('Error', error)
         console.log(localStorage)
-        watchedState.formProcess.error = error.errors || error.message;
+        state.formProcess.error = error.errors || error.message;
         watchedState.formProcess.state = 'failed';
         console.log(feedback)
         console.log(state.formProcess)
