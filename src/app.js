@@ -77,6 +77,7 @@ const render = (storage) => {
 };
 
 export default () => {
+  console.log('It work');
   const form = document.querySelector('#form-rss');
   const input = form.elements.host;
   const feedback = form.querySelector('.feedback');
@@ -145,10 +146,12 @@ export default () => {
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
+    console.log('submit');
     const formData = new FormData(e.target);
     const hostName = formData.get('host');
     validate(hostName, localStorage)
       .then(() => {
+        console.log('sending');
         watchedState.formProcess.state = 'sending';
         watchedState.formProcess.valid = true;
         input.classList.remove('is-invalid');
