@@ -162,10 +162,7 @@ export default () => {
         feedback.textContent = i18next.t('rssLoaded');
         break;
       case 'failed':
-        console.log('failed', state.formProcess.error)
         handleError();
-        console.log(feedback)
-        console.log(feedback.textContent)
         break;
       case 'finished':
         localStorage.urls.push(watchedState.formProcess.url);
@@ -220,7 +217,7 @@ export default () => {
       })
       .catch((error) => {
         console.log('Error', error)
-        watchedState.formProcess.error = error.errors[0] || error;
+        watchedState.formProcess.error = error.errors || error.message;
         console.log(state.formProcess)
         watchedState.formProcess.state = 'failed';
       })
