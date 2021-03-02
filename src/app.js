@@ -90,7 +90,7 @@ export default () => {
           translation: { // Так называемый namespace по умолчанию
             key: 'Привет мир!',
             urlRequired: 'Необходимо заполнить URL',
-            wrongUrl: 'Неправильный URL',
+            wrongUrl: 'Ссылка должна быть валидным URL',
             hasAlready: 'RSS уже существует',
             rssLoaded: 'RSS успешно загружен',
           },
@@ -162,6 +162,7 @@ export default () => {
         feedback.textContent = i18next.t('rssLoaded');
         break;
       case 'failed':
+        console.log('Обработка ошибок');
         handleError();
         break;
       case 'finished':
