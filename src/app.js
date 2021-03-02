@@ -171,11 +171,16 @@ export default () => {
     state.formProcess.url = hostName;
     validate(hostName, localStorage);
     const proxy = 'https://hexlet-allorigins.herokuapp.com/get?url=';
-    axios.get(`${proxy}${state.formProcess.url}`, { params: { disableCache: true } })
+    axios.get(proxy + state.formProcess.url, { params: { disableCache: true } })
       .then((response) => {
         console.log('response', response);
-        console.log('Response Ok');
-        return response.data;
+        watchedState.formProcess.state = 'finished';
+        return parseData(response.data.contents);
+      })
+      .then(({ feed, posts }) => {
+        localStorage.feeds.push(feed);
+        localStorage.posts = [...localStorage.posts, ...posts];
+        feedback.textContent = i18next.t('rssLoaded');
       })
       .catch((error) => {
         console.log(error);
