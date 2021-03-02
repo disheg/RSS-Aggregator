@@ -163,6 +163,8 @@ export default () => {
       case 'failed':
         console.log('failed')
         feedback.textContent = state.formProcess.error;
+        console.log(feedback)
+        console.log(feedback.textContent)
         break;
       case 'finished':
         localStorage.urls.push(watchedState.formProcess.url);
