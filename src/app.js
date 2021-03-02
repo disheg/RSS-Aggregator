@@ -193,6 +193,7 @@ export default () => {
         console.log('loadData')
         localStorage.feeds.push(feed);
         localStorage.posts = [...localStorage.posts, ...posts];
+        console.log('i18', i18next.t('rssLoaded'));
         feedback.textContent = i18next.t('rssLoaded');
         console.log('update');
       })
