@@ -230,4 +230,6 @@ export default () => {
         console.log(state.formProcess)
       })
   });
+
+  console.log('ending', feedback.textContent);
 };
