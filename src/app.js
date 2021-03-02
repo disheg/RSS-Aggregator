@@ -178,9 +178,6 @@ export default () => {
             console.log('Response Ok');
             return response.data;
           })
-        watchedState.formProcess.state = 'sending';
-        watchedState.formProcess.valid = true;
-        input.classList.remove('is-invalid');
       })
       .catch((error) => {
         state.formProcess.error = error;
