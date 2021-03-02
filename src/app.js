@@ -172,6 +172,12 @@ export default () => {
     validate(hostName, localStorage)
       .then(() => {
         console.log('sending');
+        axios.get(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(state.formProcess.url)}`)
+          .then((response) => {
+            console.log('response', response);
+            console.log('Response Ok');
+            return response.data;
+          })
         watchedState.formProcess.state = 'sending';
         watchedState.formProcess.valid = true;
         input.classList.remove('is-invalid');
