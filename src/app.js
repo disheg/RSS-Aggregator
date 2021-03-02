@@ -204,8 +204,11 @@ export default () => {
     const proxy = 'https://hexlet-allorigins.herokuapp.com/get?url=';
     console.log(localStorage)
     validate(hostName, localStorage, i18next)
-      .then(() => axios.get(proxy + state.formProcess.url, { params: { disableCache: true } }))
+      .then(() => {
+        console.log('sss')
+        return axios.get(proxy + state.formProcess.url, { params: { disableCache: true } })})
       .then((response) => {
+        console.log('ss')
         watchedState.formProcess.state = 'finished';
         return parseData(response.data.contents);
       })
@@ -218,8 +221,8 @@ export default () => {
       .catch((error) => {
         console.log('Error', error)
         watchedState.formProcess.error = error.errors || error.message;
-        console.log(state.formProcess)
         watchedState.formProcess.state = 'failed';
+        console.log(state.formProcess)
       })
   });
 };
