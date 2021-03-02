@@ -101,9 +101,6 @@ export default () => {
     newStorage.feeds.push(feed);
     newStorage.posts = [...newStorage.posts, ...posts];
     render(newStorage);
-    console.log(feedback);
-    feedback.textContent = i18next.t('rssLoaded');
-    console.log(feedback);
     input.value = '';
   };
 
@@ -116,6 +113,9 @@ export default () => {
         feedback.innerHTML = state.formProcess.error;
         break;
       case 'finished':
+        console.log(feedback);
+        feedback.textContent = i18next.t('rssLoaded');
+        console.log(feedback);
         submitButton.disabled = false;
         updateData(parseData(storage.data), storage);
         break;
