@@ -21,6 +21,16 @@ const validate = (data, localStorage) => {
 };
 
 const parseData = (data) => {
+  const parser = new DOMParser();
+  const parsedData = parser.parseFromString(data, 'text/xml');
+  const errorElement = parsedData.querySelector('parsererror');
+  if (errorElement) {
+    throw new Error(i18next.t('errors.parseFeed'));
+  }
+  return parsedData;
+};
+
+const getFeedAndPosts = (data) => {
   const title = data.querySelector('title').textContent;
   const description = data.querySelector('description').textContent;
   const items = data.querySelectorAll('item');
@@ -139,8 +149,8 @@ export default () => {
       case 'finished':
         console.log(feedback);
         console.log(feedback);
-        submitButton.disabled = false;
-        updateData(parseData(storage.data), storage);
+        //submitButton.disabled = false;
+        //updateData(parseData(storage.data), storage);
         break;
       default:
         return null;
@@ -175,8 +185,10 @@ export default () => {
       .then((response) => {
         console.log('response', response);
         watchedState.formProcess.state = 'finished';
+        console.log('data', response.data.contents)
         return parseData(response.data.contents);
       })
+      .then((data) => getFeedAndPosts(data))
       .then(({ feed, posts }) => {
         console.log('loadData')
         localStorage.feeds.push(feed);
