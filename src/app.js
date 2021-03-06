@@ -17,12 +17,8 @@ const validate = (data, localStorage, i18next) => {
         return true;
       }),
   });
-  try {
-    schema.validateSync({ url: data });
-    return null;
-  } catch (err) {
-    return err.message;
-  }
+
+  return schema.validate({ url: data });
 };
 
 const parseData = (data) => {
@@ -207,16 +203,9 @@ export default () => {
     const hostName = formData.get('host');
     state.formProcess.url = hostName;
     const proxy = 'https://hexlet-allorigins.herokuapp.com/get?url=';
-    console.log(2)
-    const valid = validate(hostName, localStorage, i18next);
-    console.log(3)
-    if(valid) {
-      console.log('valid', valid)
-      state.formProcess.error = valid;
-      watchedState.formProcess.state = 'failed';
-      return null;
-    }
-    axios.get(proxy + state.formProcess.url, { params: { disableCache: true } })
+
+    validate(hostName, localStorage, i18next)
+      .then(() => axios.get(proxy + state.formProcess.url, { params: { disableCache: true } }))
       .then((response) => {
         console.log('ss')
         watchedState.formProcess.state = 'finished';
