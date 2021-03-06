@@ -143,29 +143,6 @@ export default () => {
       case 'sending':
         console.log('processSending');
         submitButton.disabled = true;
-        axios.get(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(state.formProcess.url)}`)
-          .then((response) => {
-            console.log('response', response);
-            console.log('Response Ok');
-            return response.data;
-          })
-          .then((data) => {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(data.contents, 'text/xml');
-            return doc;
-          })
-          .then((data) => {
-            console.log('Finished');
-            localStorage.data = data;
-            localStorage.urls.push(state.formProcess.url);
-            watchedState.formProcess.state = 'finished';
-          })
-          .catch((error) => {
-            state.formProcess.errors.push(error);
-            watchedState.formProcess.state = 'failed';
-          });
-        console.log('After Promise')
-        feedback.textContent = i18next.t('rssLoaded');
         break;
       case 'failed':
         console.log('Обработка ошибок');
@@ -175,6 +152,7 @@ export default () => {
       case 'finished':
         localStorage.urls.push(watchedState.formProcess.url);
         input.value = '';
+        submitButton.disabled = false;
         feedback.textContent = i18next.t('rssLoaded');
         //submitButton.disabled = false;
         //updateData(parseData(storage.data), storage);
@@ -208,7 +186,10 @@ export default () => {
     const proxy = 'https://hexlet-allorigins.herokuapp.com/get?url=';
 
     validate(hostName, localStorage, i18next)
-      .then(() => axios.get(proxy + state.formProcess.url, { params: { disableCache: true } }))
+      .then(() => {
+        watchedState.formProcess.state = 'sending';
+        return axios.get(proxy + state.formProcess.url, { params: { disableCache: true } });
+      })
       .then((response) => {
         console.log('ss')
         watchedState.formProcess.state = 'finished';
@@ -223,7 +204,7 @@ export default () => {
       .catch((error) => {
         console.log('Error', error)
         console.log(localStorage)
-        if (error.message === 'Network Error') {
+        if (!error.response) {
           state.formProcess.error = i18next.t('networkError');
         } else {
           state.formProcess.error = error.errors || error.message;
