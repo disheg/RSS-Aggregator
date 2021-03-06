@@ -142,6 +142,7 @@ export default () => {
     switch (processState) {
       case 'sending':
         console.log('processSending');
+        input.setAttribute('readonly', '');
         submitButton.disabled = true;
         break;
       case 'failed':
@@ -152,6 +153,7 @@ export default () => {
       case 'finished':
         localStorage.urls.push(watchedState.formProcess.url);
         input.value = '';
+        input.removeAttribute('readonly');
         submitButton.disabled = false;
         feedback.textContent = i18next.t('rssLoaded');
         //submitButton.disabled = false;
