@@ -21,12 +21,13 @@ const validate = (data, localStorage, i18next) => {
   return schema.validate({ url: data });
 };
 
-const parseData = (data) => {
+const parseData = (data, i18next) => {
+  console.log('i18', i18next.t('parseError'))
   const parser = new DOMParser();
   const parsedData = parser.parseFromString(data, 'text/xml');
   const errorElement = parsedData.querySelector('parsererror');
   if (errorElement) {
-    throw new Error(i18next.t('errors.parseFeed'));
+    throw new Error(i18next.t('parseError'));
   }
   return parsedData;
 };
@@ -94,6 +95,7 @@ export default () => {
             wrongUrl: 'Ссылка должна быть валидным URL',
             hasAlready: 'RSS уже существует',
             rssLoaded: 'RSS успешно загружен',
+            parseError: 'Ресурс не содержит валидный RSS',
           },
         },
       },
@@ -209,7 +211,7 @@ export default () => {
       .then((response) => {
         console.log('ss')
         watchedState.formProcess.state = 'finished';
-        return parseData(response.data.contents);
+        return parseData(response.data.contents, i18next);
       })
       .then((data) => getFeedAndPosts(data))
       .then(({ feed, posts }) => {
