@@ -204,7 +204,7 @@ export default () => {
       .catch((error) => {
         console.log('Error', error)
         console.log(localStorage)
-        if (!error.response) {
+        if (!!error.isAxiosError && !error.response) {
           state.formProcess.error = i18next.t('networkError');
         } else {
           state.formProcess.error = error.errors || error.message;
