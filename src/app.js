@@ -55,6 +55,7 @@ const parseSite = (url) => {
 };
 
 const render = (storage) => {
+  console.log('storage', storage);
   const renderFeeds = (data) => data.map(({ title, description }) => (`
       <li class="list-group-item">
         <h3>${title}</h3>
@@ -68,6 +69,8 @@ const render = (storage) => {
       <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal">Просмотр</button>
     </li>`));
 
+  console.log(renderFeeds(storage.feeds));
+  console.log(renderPosts);
   const feeds = document.querySelector('.feeds');
   const posts = document.querySelector('.posts');
 
@@ -158,6 +161,7 @@ export default () => {
         input.toggleAttribute('readonly');
         submitButton.disabled = false;
         feedback.textContent = i18next.t('rssLoaded');
+        console.log(storage)
         render(storage);
         break;
       default:
@@ -195,13 +199,13 @@ export default () => {
       })
       .then((response) => {
         console.log('ss')
-        watchedState.formProcess.state = 'finished';
         return parseData(response.data.contents, i18next);
       })
       .then((data) => getFeedAndPosts(data))
       .then(({ feed, posts }) => {
         localStorage.feeds.push(feed);
         localStorage.posts = [...localStorage.posts, ...posts];
+        watchedState.formProcess.state = 'finished';
         console.log('update');
       })
       .catch((error) => {
