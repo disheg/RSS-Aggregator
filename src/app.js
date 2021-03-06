@@ -147,6 +147,7 @@ export default () => {
         break;
       case 'failed':
         console.log('Обработка ошибок');
+        input.toggleAttribute('readonly');
         handleError();
         state.formProcess.state = '';
         break;
@@ -157,8 +158,6 @@ export default () => {
         submitButton.disabled = false;
         feedback.textContent = i18next.t('rssLoaded');
         render(storage);
-        //submitButton.disabled = false;
-        //updateData(parseData(storage.data), storage);
         break;
       default:
         return null;
