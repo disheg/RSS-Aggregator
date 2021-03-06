@@ -148,6 +148,7 @@ export default () => {
       case 'failed':
         console.log('Обработка ошибок');
         input.toggleAttribute('readonly');
+        submitButton.disabled = false;
         handleError();
         state.formProcess.state = '';
         break;
