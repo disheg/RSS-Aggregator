@@ -96,6 +96,7 @@ export default () => {
             hasAlready: 'RSS уже существует',
             rssLoaded: 'RSS успешно загружен',
             parseError: 'Ресурс не содержит валидный RSS',
+            networkError: 'Ошибка сети',
           },
         },
       },
@@ -222,7 +223,11 @@ export default () => {
       .catch((error) => {
         console.log('Error', error)
         console.log(localStorage)
-        state.formProcess.error = error.errors || error.message;
+        if (error.message === 'Network Error') {
+          state.formProcess.error = i18next.t('networkError');
+        } else {
+          state.formProcess.error = error.errors || error.message;
+        }
         watchedState.formProcess.state = 'failed';
         console.log('1234', feedback.textContent)
         console.log(feedback)
