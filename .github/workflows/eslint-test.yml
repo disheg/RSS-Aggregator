@@ -1,4 +1,4 @@
-name: Eslint
+name: eslint-test
 on:
   - push
   - pull_request
