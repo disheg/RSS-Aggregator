@@ -34,15 +34,23 @@ const parseData = (data, i18next) => {
 };
 
 const getFeedAndPosts = (data) => {
+  console.log(data)
   const title = data.querySelector('title').textContent;
   const description = data.querySelector('description').textContent;
   const items = data.querySelectorAll('item');
-  const posts = [...items].map((el) => ({
-    id: _.uniqueId(),
-    title: el.children[0].textContent,
-    description: el.children[1].textContent,
-    url: el.children[2].textContent,
-  }));
+  //console.log(items[1].childNodes.keys().forEach((el) => console.log(el)))
+  console.log(items[2].children.item('description'))
+  const posts = [...items].map((post) => {
+    const title = post.querySelector('title').textContent;
+    const description = post.querySelector('description').textContent;
+    const link = post.querySelector('link').textContent;
+    return {
+      id: _.uniqueId(),
+      title,
+      description,
+      link,
+    };
+  });
   return {
     feed: { id: _.uniqueId(), title, description },
     posts,
@@ -50,26 +58,21 @@ const getFeedAndPosts = (data) => {
 };
 
 const render = (storage, elements, i18next) => {
-  console.log('storage', storage);
+  const { feeds, posts } = elements;
   const renderFeeds = (data) => data.map(({ title, description }) => (`
       <li class="list-group-item">
         <h3>${title}</h3>
         <p>${description}</p>
       </li>`));
-  const renderPosts = (data) => data.map(({ title, id, url }) => (`
+  const renderPosts = (data) => data.map(({ title, id, link }) => (`
     <li class="list-group-item d-flex justify-content-between align-items-start">
-      <a href="${url}" class="font-weight-bold" target="_blank" rel="noopener noreferrer">
+      <a href="${link}" class="font-weight-bold" target="_blank" rel="noopener noreferrer">
         ${title}
       </a>
       <button id="btn-modal" type="button" class="btn btn-primary" data-id="${id}" data-toggle="modal" data-target="#rssModal">
         ${i18next.t('btnWatch')}
       </button>
     </li>`));
-
-  console.log(renderFeeds(storage.feeds));
-  console.log(renderPosts);
-  const feeds = document.querySelector('.feeds');
-  const posts = document.querySelector('.posts');
 
   feeds.innerHTML = `<h2>Feeds</h2>
     <ul class="list-group mb-5">
@@ -85,6 +88,7 @@ const render = (storage, elements, i18next) => {
     const { id } = e.target.dataset;
     const data = storage.posts.find((post) => post.id === id);
     const { title, description, url } = data;
+    console.log(data)
     elements.titleModal.textContent = title;
     elements.descriptionModal.textContent = description;
     elements.link.href = url;
@@ -113,13 +117,15 @@ export default () => {
       },
     });
   const form = document.querySelector('#form-rss');
+  const feeds = document.querySelector('.feeds');
+  const posts = document.querySelector('.posts');
   const input = form.elements.host;
   const feedback = form.querySelector('.feedback');
   const titleModal = document.querySelector('#modalLabel');
   const descriptionModal = document.querySelector('#modalDescription');
   const link = document.querySelector('a[role="button"]');
 
-  const elements = { titleModal, descriptionModal, link };
+  const elements = { feeds, posts, titleModal, descriptionModal, link };
 
   const localStorage = {
     data: null,
@@ -209,6 +215,7 @@ export default () => {
       .then(({ feed, posts }) => {
         localStorage.feeds.push(feed);
         localStorage.posts = [...localStorage.posts, ...posts];
+        console.log(localStorage)
         watchedState.formProcess.state = 'finished';
       })
       .catch((error) => {
