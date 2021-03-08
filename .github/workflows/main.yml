@@ -31,5 +31,3 @@ jobs:
           
       - name: Test & publish code coverage
         uses: paambaati/codeclimate-action@v2.6.0
-        env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CLIRMA }}
