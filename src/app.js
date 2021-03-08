@@ -54,19 +54,21 @@ const parseSite = (url) => {
   return fetch(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(url)}`);
 };
 
-const render = (storage) => {
+const render = (storage, elements) => {
   console.log('storage', storage);
   const renderFeeds = (data) => data.map(({ title, description }) => (`
       <li class="list-group-item">
         <h3>${title}</h3>
         <p>${description}</p>
       </li>`));
-  const renderPosts = (data) => data.map(({ title, url }) => (`
+  const renderPosts = (data) => data.map(({ title, id, url }) => (`
     <li class="list-group-item d-flex justify-content-between align-items-start">
       <a href="${url}" class="font-weight-bold" target="_blank" rel="noopener noreferrer">
         ${title}
       </a>
-      <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal">Просмотр</button>
+      <button id="btn-modal" type="button" class="btn btn-primary" data-id="${id}" data-toggle="modal" data-target="#rssModal">
+        Launch demo modal
+      </button>
     </li>`));
 
   console.log(renderFeeds(storage.feeds));
@@ -82,6 +84,18 @@ const render = (storage) => {
     <ul class="list-group">
       ${renderPosts(storage.posts).join('')}
     </ul>`;
+  
+  const btns = document.querySelectorAll('#btn-modal');
+  btns.forEach((btn) => btn.addEventListener('click', (e) => {
+    console.log(elements)
+    const { id } = e.target.dataset;
+    const data = storage.posts.find((post) => post.id === id);
+    const { title, description, url } = data;
+    elements.titleModal.textContent = title;
+    elements.descriptionModal.textContent = description; 
+    elements.link.href = url;
+    console.log(e.target.dataset.id)
+  }))
 };
 
 export default () => {
@@ -108,6 +122,11 @@ export default () => {
   const form = document.querySelector('#form-rss');
   const input = form.elements.host;
   const feedback = form.querySelector('.feedback');
+  const titleModal = document.querySelector('#modalLabel');
+  const descriptionModal = document.querySelector('#modalDescription');
+  const link = document.querySelector('a[role="button"]');
+
+  const elements = { titleModal, descriptionModal, link };
 
   const localStorage = {
     data: null,
@@ -162,7 +181,7 @@ export default () => {
         submitButton.disabled = false;
         feedback.textContent = i18next.t('rssLoaded');
         console.log(storage)
-        render(storage);
+        render(storage, elements);
         break;
       default:
         return null;
@@ -220,8 +239,7 @@ export default () => {
         console.log('1234', feedback.textContent)
         console.log(feedback)
         console.log(state.formProcess)
-      })
+      });
   });
-
   console.log('ending', feedback.textContent);
 };
