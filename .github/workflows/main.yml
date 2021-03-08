@@ -29,5 +29,5 @@ jobs:
         run: |
           npm run lint
           
-      - name: Test & publish code coverage
+      - name: Publish code coverage
         uses: paambaati/codeclimate-action@v2.6.0
