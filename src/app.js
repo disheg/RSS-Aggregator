@@ -40,12 +40,12 @@ const getFeedAndPosts = (data) => {
   const posts = [...items].map((post) => {
     const title = post.querySelector('title').textContent;
     const description = post.querySelector('description').textContent;
-    const link = post.querySelector('link').textContent;
+    const href = post.querySelector('link').textContent;
     return {
       id: _.uniqueId(),
       title,
       description,
-      link,
+      href,
     };
   });
   return {
@@ -56,8 +56,8 @@ const getFeedAndPosts = (data) => {
 
 const render = (storage, elements, i18next) => {
   const {
-    feeds,
-    posts,
+    feedsElement,
+    postsElement,
     titleModal,
     descriptionModal,
     link,
@@ -68,9 +68,9 @@ const render = (storage, elements, i18next) => {
         <h3>${title}</h3>
         <p>${description}</p>
       </li>`));
-  const renderPosts = (data) => data.map(({ title, id, link }) => (`
+  const renderPosts = (data) => data.map(({ title, id, href }) => (`
     <li class="list-group-item d-flex justify-content-between align-items-start">
-      <a href="${link}" data-id="${id}" class="font-weight-bold" target="_blank" rel="noopener noreferrer">
+      <a href="${href}" data-id="${id}" class="font-weight-bold" target="_blank" rel="noopener noreferrer">
         ${title}
       </a>
       <button id="btn-modal" type="button" class="btn btn-primary" data-id="${id}" data-toggle="modal" data-target="#rssModal">
@@ -78,16 +78,15 @@ const render = (storage, elements, i18next) => {
       </button>
     </li>`));
 
-  feeds.innerHTML = `<h2>Feeds</h2>
+  feedsElement.innerHTML = `<h2>Feeds</h2>
     <ul class="list-group mb-5">
       ${renderFeeds(storage.feeds).join('')}
     </ul>`;
-  posts.innerHTML = `<h2>Posts</h2>
+  postsElement.innerHTML = `<h2>Posts</h2>
     <ul class="list-group">
       ${renderPosts(storage.posts).join('')}
     </ul>`;
 
-  
   const btns = document.querySelectorAll('#btn-modal');
   btns.forEach((btn) => btn.addEventListener('click', (e) => {
     const { id } = e.target.dataset;
@@ -95,11 +94,9 @@ const render = (storage, elements, i18next) => {
     a.classList.remove('font-weight-bold');
     const data = storage.posts.find((post) => post.id === id);
     const { title, description, url } = data;
-    console.log('data', data)
     titleModal.textContent = title;
     descriptionModal.textContent = description;
     link.href = url;
-    console.log('title', titleModal.textContent)
   }));
 };
 
@@ -125,15 +122,21 @@ export default () => {
       },
     });
   const form = document.querySelector('#form-rss');
-  const feeds = document.querySelector('.feeds');
-  const posts = document.querySelector('.posts');
+  const feedsElement = document.querySelector('.feeds');
+  const postsElement = document.querySelector('.posts');
   const input = form.elements.host;
   const feedback = form.querySelector('.feedback');
   const titleModal = document.querySelector('#modalLabel');
   const descriptionModal = document.querySelector('#modalDescription');
   const link = document.querySelector('a[role="button"]');
 
-  const elements = { feeds, posts, titleModal, descriptionModal, link };
+  const elements = {
+    feedsElement,
+    postsElement,
+    titleModal,
+    descriptionModal,
+    link,
+  };
 
   const localStorage = {
     data: null,
@@ -151,15 +154,6 @@ export default () => {
   };
 
   const submitButton = form.querySelector('[type="submit"]');
-
-  const updateData = (data, storage) => {
-    const newStorage = { ...storage };
-    const { feed, posts } = data;
-    newStorage.feeds.push(feed);
-    newStorage.posts = [...newStorage.posts, ...posts];
-    render(newStorage);
-    input.value = '';
-  };
 
   const handleError = () => {
     feedback.textContent = state.formProcess.error;
@@ -193,10 +187,6 @@ export default () => {
 
   const watchedState = onChange(state, (path, value) => {
     switch (path) {
-      case 'formProcess.valid':
-        input.classList.add('is-invalid');
-        feedback.innerHTML = state.formProcess.error.errors[0];
-        break;
       case 'formProcess.state':
         processStateHandler(value, watchedState, localStorage);
         break;
@@ -223,11 +213,9 @@ export default () => {
       .then(({ feed, posts }) => {
         localStorage.feeds.push(feed);
         localStorage.posts = [...localStorage.posts, ...posts];
-        console.log(localStorage)
         watchedState.formProcess.state = 'finished';
       })
       .catch((error) => {
-        console.log(localStorage)
         if (!!error.isAxiosError && !error.response) {
           state.formProcess.error = i18next.t('networkError');
         } else {
