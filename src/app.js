@@ -21,8 +21,9 @@ const validate = (data, localStorage, i18next) => {
   return schema.validate({ url: data });
 };
 
+const parseSite = (url, proxy) => axios.get(proxy + url, { params: { disableCache: true } });
+
 const parseData = (data, i18next) => {
-  console.log('i18', i18next.t('parseError'))
   const parser = new DOMParser();
   const parsedData = parser.parseFromString(data, 'text/xml');
   const errorElement = parsedData.querySelector('parsererror');
@@ -48,13 +49,7 @@ const getFeedAndPosts = (data) => {
   };
 };
 
-const parseSite = (url) => {
-  console.log('ParseSite');
-  
-  return fetch(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(url)}`);
-};
-
-const render = (storage, elements) => {
+const render = (storage, elements, i18next) => {
   console.log('storage', storage);
   const renderFeeds = (data) => data.map(({ title, description }) => (`
       <li class="list-group-item">
@@ -67,7 +62,7 @@ const render = (storage, elements) => {
         ${title}
       </a>
       <button id="btn-modal" type="button" class="btn btn-primary" data-id="${id}" data-toggle="modal" data-target="#rssModal">
-        Launch demo modal
+        ${i18next.t('btnWatch')}
       </button>
     </li>`));
 
@@ -84,17 +79,15 @@ const render = (storage, elements) => {
     <ul class="list-group">
       ${renderPosts(storage.posts).join('')}
     </ul>`;
-  
+
   const btns = document.querySelectorAll('#btn-modal');
   btns.forEach((btn) => btn.addEventListener('click', (e) => {
-    console.log(elements)
     const { id } = e.target.dataset;
     const data = storage.posts.find((post) => post.id === id);
     const { title, description, url } = data;
     elements.titleModal.textContent = title;
-    elements.descriptionModal.textContent = description; 
+    elements.descriptionModal.textContent = description;
     elements.link.href = url;
-    console.log(e.target.dataset.id)
   }))
 };
 
@@ -114,11 +107,11 @@ export default () => {
             rssLoaded: 'RSS успешно загружен',
             parseError: 'Ресурс не содержит валидный RSS',
             networkError: 'Ошибка сети',
+            btnWatch: 'Просмотр',
           },
         },
       },
     });
-  console.log('It work');
   const form = document.querySelector('#form-rss');
   const input = form.elements.host;
   const feedback = form.querySelector('.feedback');
@@ -155,20 +148,16 @@ export default () => {
   };
 
   const handleError = () => {
-    console.log('handleError', state.formProcess.error)
     feedback.textContent = state.formProcess.error;
-    console.log('feedback', feedback.textContent);
   };
 
   const processStateHandler = (processState, watchedState, storage) => {
     switch (processState) {
       case 'sending':
-        console.log('processSending');
         input.toggleAttribute('readonly');
         submitButton.disabled = true;
         break;
       case 'failed':
-        console.log('Обработка ошибок');
         input.toggleAttribute('readonly');
         submitButton.disabled = false;
         handleError();
@@ -180,8 +169,7 @@ export default () => {
         input.toggleAttribute('readonly');
         submitButton.disabled = false;
         feedback.textContent = i18next.t('rssLoaded');
-        console.log(storage)
-        render(storage, elements);
+        render(storage, elements, i18next);
         break;
       default:
         return null;
@@ -214,21 +202,16 @@ export default () => {
     validate(hostName, localStorage, i18next)
       .then(() => {
         watchedState.formProcess.state = 'sending';
-        return axios.get(proxy + state.formProcess.url, { params: { disableCache: true } });
+        return parseSite(hostName, proxy);
       })
-      .then((response) => {
-        console.log('ss')
-        return parseData(response.data.contents, i18next);
-      })
+      .then((response) => parseData(response.data.contents, i18next))
       .then((data) => getFeedAndPosts(data))
       .then(({ feed, posts }) => {
         localStorage.feeds.push(feed);
         localStorage.posts = [...localStorage.posts, ...posts];
         watchedState.formProcess.state = 'finished';
-        console.log('update');
       })
       .catch((error) => {
-        console.log('Error', error)
         console.log(localStorage)
         if (!!error.isAxiosError && !error.response) {
           state.formProcess.error = i18next.t('networkError');
@@ -236,10 +219,6 @@ export default () => {
           state.formProcess.error = error.errors || error.message;
         }
         watchedState.formProcess.state = 'failed';
-        console.log('1234', feedback.textContent)
-        console.log(feedback)
-        console.log(state.formProcess)
       });
   });
-  console.log('ending', feedback.textContent);
 };
