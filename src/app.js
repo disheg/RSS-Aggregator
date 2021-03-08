@@ -34,12 +34,9 @@ const parseData = (data, i18next) => {
 };
 
 const getFeedAndPosts = (data) => {
-  console.log(data)
-  const title = data.querySelector('title').textContent;
-  const description = data.querySelector('description').textContent;
+  const titleFeed = data.querySelector('title').textContent;
+  const descriptionFeed = data.querySelector('description').textContent;
   const items = data.querySelectorAll('item');
-  //console.log(items[1].childNodes.keys().forEach((el) => console.log(el)))
-  console.log(items[2].children.item('description'))
   const posts = [...items].map((post) => {
     const title = post.querySelector('title').textContent;
     const description = post.querySelector('description').textContent;
@@ -52,7 +49,7 @@ const getFeedAndPosts = (data) => {
     };
   });
   return {
-    feed: { id: _.uniqueId(), title, description },
+    feed: { id: _.uniqueId(), title: titleFeed, description: descriptionFeed },
     posts,
   };
 };
