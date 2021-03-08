@@ -9,8 +9,8 @@ const validate = (data, localStorage, i18next) => {
     url: yup.string()
       .required(i18next.t('required'))
       .url(i18next.t('wrongUrl'))
-      .test('test-name', i18next.t('hasAlready'), function isInclude(value) {
-        const { path, createError } = this;
+      .test('hasAlready', i18next.t('hasAlready'), (value, textContent) => {
+        const { path, createError } = textContent;
         if (_.includes(localStorage.urls, value)) {
           return createError({ path, message: i18next.t('hasAlready') });
         }
