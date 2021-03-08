@@ -9,10 +9,10 @@ const validate = (data, localStorage, i18next) => {
     url: yup.string()
       .required(i18next.t('required'))
       .url(i18next.t('wrongUrl'))
-      .test('hasAlready', i18next.t('hasAlready'), (value, textContent) => {
+      .test('hasAlready', i18next.t('errors.hasAlready'), (value, textContent) => {
         const { path, createError } = textContent;
         if (_.includes(localStorage.urls, value)) {
-          return createError({ path, message: i18next.t('hasAlready') });
+          return createError({ path, message: i18next.t('errors.hasAlready') });
         }
         return true;
       }),
@@ -28,7 +28,7 @@ const parseData = (data, i18next) => {
   const parsedData = parser.parseFromString(data, 'text/xml');
   const errorElement = parsedData.querySelector('parsererror');
   if (errorElement) {
-    throw new Error(i18next.t('parseError'));
+    throw new Error(i18next.t('errors.parseError'));
   }
   return parsedData;
 };
@@ -104,18 +104,20 @@ export default () => {
   const i18next = i18n.createInstance();
   i18next
     .init({
-      lng: 'ru', // Текущий язык
+      lng: 'ru',
       debug: true,
       resources: {
-        ru: { // Тексты конкретного языка
-          translation: { // Так называемый namespace по умолчанию
-            key: 'Привет мир!',
-            urlRequired: 'Необходимо заполнить URL',
-            wrongUrl: 'Ссылка должна быть валидным URL',
-            hasAlready: 'RSS уже существует',
+        ru: {
+          translation: {
+            errors: {
+              urlRequired: 'Необходимо заполнить URL',
+              wrongUrl: 'Ссылка должна быть валидным URL',
+              hasAlready: 'RSS уже существует',
+              parseError: 'Ресурс не содержит валидный RSS',
+              networkError: 'Ошибка сети',
+            },
             rssLoaded: 'RSS успешно загружен',
-            parseError: 'Ресурс не содержит валидный RSS',
-            networkError: 'Ошибка сети',
+            key: 'Привет мир!',
             btnWatch: 'Просмотр',
           },
         },
@@ -217,7 +219,7 @@ export default () => {
       })
       .catch((error) => {
         if (!!error.isAxiosError && !error.response) {
-          state.formProcess.error = i18next.t('networkError');
+          state.formProcess.error = i18next.t('errors.networkError');
         } else {
           state.formProcess.error = error.errors || error.message;
         }
