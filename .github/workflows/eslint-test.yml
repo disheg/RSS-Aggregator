@@ -1,4 +1,4 @@
-name: Node
+name: Eslint
 on:
   - push
   - pull_request
