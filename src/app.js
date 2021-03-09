@@ -78,6 +78,7 @@ export default () => {
         },
       },
     });
+
   const form = document.querySelector('#form-rss');
   const feedsElement = document.querySelector('.feeds');
   const postsElement = document.querySelector('.posts');
